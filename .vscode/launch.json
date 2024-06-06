@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "ArrayListDemo",
+            "request": "launch",
+            "mainClass": "_00_intro_to_array_lists.ArrayListDemo"
+        },
+        {
+            "type": "java",
+            "name": "IntroToArrayLists",
+            "request": "launch",
+            "mainClass": "_00_intro_to_array_lists.IntroToArrayLists"
+        },
+        {
+            "type": "java",
+            "name": "VisualArrayLists",
+            "request": "launch",
+            "mainClass": "_01_array_list_visualizer.VisualArrayLists"
+        }
+    ]
+}

@@ -1,0 +1,4 @@
+*.class
+bin/*
+!bin/.keep
+.DS_Store

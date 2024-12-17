@@ -51,14 +51,14 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 			if (actionQueue.size() > 0) {
 				currentAction = actionQueue.remove();
 				if (currentAction.type == Action.REMOVE) {
-					currentAction.value = list.list[currentAction.index];
+					currentAction.value = list.displayed[currentAction.index];
 				}
 			}
 		}
 	}
 	
 	boolean checkIndexOutOfBounds(int index) {
-		if (index >= list.list.length || index < 0) {
+		if (index >= list.displayed.length || index < 0) {
 			currentAction = null;
 			return true;
 		}
@@ -66,12 +66,12 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 	}
 	
 	void drawList(Graphics g) {
-		for (int i = 0; i < list.list.length; i++) {
+		for (int i = 0; i < list.displayed.length; i++) {
 			Color c = Color.cyan;
 			if (i == lastActionIndex) {
 				c = Color.green;
 			}
-			drawObjectAt(g, c, list.list[i], i, 20 + i * 50, listGraphicsHeight);
+			drawObjectAt(g, c, list.displayed[i], i, 20 + i * 50, listGraphicsHeight);
 		}
 	}
 	
@@ -94,22 +94,22 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 	}
 	
 	private void addAnimation(Graphics g, Action<T> action) {
-		if (action.x > 20 + list.list.length * 50) {
+		if (action.x > 20 + list.displayed.length * 50) {
 			action.x -= 4;
 		} else {
 			addAction(action);
 			endCurrentAction(action);
 		}
-		drawObjectAt(g, Color.green, action.value, list.list.length, action.x, action.y);
+		drawObjectAt(g, Color.green, action.value, list.displayed.length, action.x, action.y);
 	}
 	
 	private void addAction(Action<T> action) {
-		T[] tList = (T[]) new Object[list.list.length + 1];
-		for (int i = 0; i < list.list.length; i++) {
-			tList[i] = list.list[i];
+		T[] tList = (T[]) new Object[list.displayed.length + 1];
+		for (int i = 0; i < list.displayed.length; i++) {
+			tList[i] = list.displayed[i];
 		}
-		tList[list.list.length] = action.value;
-		list.list = tList;
+		tList[list.displayed.length] = action.value;
+		list.displayed = tList;
 	}
 	
 	private void insertAnimation(Graphics g, Action<T> action) {
@@ -118,7 +118,7 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 		} else if (action.y < listGraphicsHeight) {
 			action.y += 2;
 			drawBlankObjectAt(g, Color.gray, 20 + action.index * 50, listGraphicsHeight);
-			if (!list.list[action.index].equals("")) {
+			if (!list.displayed[action.index].equals("")) {
 				insertAction(new Action(Action.INSERT, action.index, ""));
 			}
 		} else {
@@ -129,10 +129,10 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 	}
 
 	private void insertAction(Action<T> action) {
-		if (action.index < 0 || action.index > list.list.length - 1)
+		if (action.index < 0 || action.index > list.displayed.length - 1)
 			throw new IndexOutOfBoundsException();
 
-		T[] tList = (T[]) new Object[list.list.length + 1];
+		T[] tList = (T[]) new Object[list.displayed.length + 1];
 
 		int ctr = 0;
 
@@ -140,10 +140,10 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 			if (i == action.index) {
 				tList[i] = action.value;
 			} else {
-				tList[i] = list.list[ctr++];
+				tList[i] = list.displayed[ctr++];
 			}
 		}
-		list.list = tList;
+		list.displayed = tList;
 	}
 	
 	private void setAnimation(Graphics g, Action<T> action) {
@@ -160,12 +160,12 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 	}
 
 	private void setAction(Action<T> action) {
-		if (action.index < 0 || action.index > list.list.length)
+		if (action.index < 0 || action.index > list.displayed.length)
 			throw new IndexOutOfBoundsException();
 
-		for (int i = 0; i < list.list.length; i++) {
+		for (int i = 0; i < list.displayed.length; i++) {
 			if (i == action.index) {
-				list.list[i] = action.value;
+				list.displayed[i] = action.value;
 				break;
 			}
 		}
@@ -179,22 +179,22 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 			removeAction(action);
 			endCurrentAction(new Action<T>(Action.REMOVE, -1, null));
 		}
-		drawObjectAt(g, Color.green, action.value, list.list.length, action.x, action.y);
+		drawObjectAt(g, Color.green, action.value, list.displayed.length, action.x, action.y);
 	}
 
 	private void removeAction(Action<T> action) {
-		if (action.index < 0 || action.index > list.list.length)
+		if (action.index < 0 || action.index > list.displayed.length)
 			throw new IndexOutOfBoundsException();
 
 		int ctr = 0;
-		T[] tList = (T[]) new Object[list.list.length - 1];
-		for (int i = 0; i < list.list.length; i++) {
+		T[] tList = (T[]) new Object[list.displayed.length - 1];
+		for (int i = 0; i < list.displayed.length; i++) {
 			if (i != action.index) {
-				tList[ctr++] = list.list[i];
+				tList[ctr++] = list.displayed[i];
 			}
 		}
 
-		list.list = tList;
+		list.displayed = tList;
 	}
 	
 	private void endCurrentAction(Action<T> action) {

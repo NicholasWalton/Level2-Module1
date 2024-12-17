@@ -3,25 +3,15 @@ package _01_array_list_visualizer.data;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.JPanel;
 
 @SuppressWarnings("unchecked")
-public class ArrayList<T> implements Iterable<T> {
-	public ArrayListDisplayPanel<T> displayPanel;
-	T[] displayed;
-	private T[] actual;
-
-	public ArrayList() {
-		displayed = (T[]) new Object[0];
-		actual = (T[]) new Object[0];
-		displayPanel = new ArrayListDisplayPanel<T>(this);
-	}
-
+public class ArrayList<T> extends java.util.ArrayList<T> {
+	public ArrayListDisplayPanel<T> displayPanel = new ArrayListDisplayPanel<T>(this);
+	
 	/**
 	 * Returns the element at the specified position in this list.
 	 * 
@@ -29,10 +19,11 @@ public class ArrayList<T> implements Iterable<T> {
 	 * @return the element at the specified position in this list
 	 * @throws IndexOutOfBoundsException
 	 */
+	@Override
 	public T get(int index) throws IndexOutOfBoundsException {
-		if (index < 0 || index > actual.length)
+		if (index < 0 || index > this.size())
 			throw new IndexOutOfBoundsException();
-		return actual[index];
+		return super.get(index);
 	}
 
 	/**
@@ -41,13 +32,9 @@ public class ArrayList<T> implements Iterable<T> {
 	 * @param e - element to be appended to this list
 	 * @return true (as specified by Collection.add(E))
 	 */
+	@Override
 	public boolean add(T e) {
-		// Expected list
-		T[] nList = (T[]) new Object[actual.length + 1];
-		for (int i = 0; i < actual.length; i++)
-			nList[i] = actual[i];
-		nList[nList.length - 1] = e;
-		actual = nList;
+		super.add(e);
 
 		// Display list
 		Action<T> action = new Action<T>(Action.ADD, -1, e);
@@ -66,21 +53,16 @@ public class ArrayList<T> implements Iterable<T> {
 	 * @throws IndexOutOfBoundsException
 	 * @return true (as specified by Collection.add(E))
 	 */
-	public boolean add(int index, T element) throws IndexOutOfBoundsException {
-		// Expected list
-		T[] nList = (T[]) new Object[actual.length + 1];
-		for (int i = 0; i < index; i++)
-			nList[i] = actual[i];
-		nList[index] = element;
-		for (int i = index; i < actual.length; i++)
-			nList[i + 1] = actual[i];
-		actual = nList;
+	public void add(int index, T element) throws IndexOutOfBoundsException {
+		super.add(index, element);
 
 		// Display list
 		Action<T> action = new Action<T>(Action.INSERT, index, element);
 		action.x = ArrayListDisplayPanel.WIDTH + 50;
 		action.y = displayPanel.listGraphicsHeight - 100;
-		return displayPanel.actionQueue.add(action);
+		if (!displayPanel.actionQueue.add(action)) {
+			throw new RuntimeException("Queue.add() should always return true");
+		}
 	}
 
 	/**
@@ -93,13 +75,10 @@ public class ArrayList<T> implements Iterable<T> {
 	 * @throws IndexOutOfBoundsException - if the index is out of range(index < 0 ||
 	 *                                   index >= size())
 	 */
+	@Override
 	public T set(int index, T element) throws IndexOutOfBoundsException {
-		T e = get(index);
-		// Expected list
-		T[] nList = actual.clone();
-		nList[index] = element;
-		actual = nList;
-
+		T e = super.set(index, element);
+		
 		// Display list
 		Action<T> action = new Action<T>(Action.SET, index, element);
 		action.x = ArrayListDisplayPanel.WIDTH + 50;
@@ -117,15 +96,9 @@ public class ArrayList<T> implements Iterable<T> {
 	 * @throws IndexOutOfBoundsException if the index is out of range(index < 0 ||
 	 *                                   index >= size())
 	 */
+	@Override
 	public T remove(int index) throws IndexOutOfBoundsException {
-		T e = get(index);
-		// Expected list
-		T[] nList = (T[]) new Object[actual.length - 1];
-		for (int i = 0; i < index; i++)
-			nList[i] = actual[i];
-		for (int i = index + 1; i < actual.length; i++)
-			nList[i - 1] = actual[i];
-		actual = nList;
+		T e = super.remove(index);
 
 		// Display list
 		Action<T> action = new Action<T>(Action.REMOVE, index, null);
@@ -146,7 +119,8 @@ public class ArrayList<T> implements Iterable<T> {
 	 * @param o - element to be removed from this list, if present
 	 * @return true if this list contained the specified element
 	 */
-	public boolean remove(T o) {
+	@Override
+	public boolean remove(Object o) {
 		int index = indexOf(o);
 		if (index == -1) {
 			return false;
@@ -156,64 +130,6 @@ public class ArrayList<T> implements Iterable<T> {
 		}
 	}
 
-	/**
-	 * Returns the index of the first occurrence of the specified element in this
-	 * list, or -1 if this list does not contain the element. More formally, returns
-	 * the lowest index i such that (o==null ? get(i)==null : o.equals(get(i))), or
-	 * -1 if there is no such index.
-	 * 
-	 * @param o - element to search for
-	 * @return the index of the first occurrence of the specified element in this
-	 *         list, or -1 if this list does not contain the element
-	 */
-	public int indexOf(T o) {
-		for (int i = 0; i < actual.length; i++) {
-			if (actual[i] == o) {
-				return i;
-			}
-		}
-
-		return -1;
-	}
-
-	/**
-	 * Returns the number of elements in this list.
-	 * 
-	 * @return the number of elements in this list
-	 */
-	public int size() {
-		return actual.length;
-	}
-
-	/**
-	 * Returns true if this list contains the specified element. More formally,
-	 * returns true if and only if this list contains at least one element e such
-	 * that (o==null ? e==null : o.equals(e)).
-	 * 
-	 * @param o - element whose presence in this list is to be tested
-	 * @return true if this list contains the specified element
-	 */
-	public boolean contains(T o) {
-		for (T t : actual) {
-			if (t.equals(o)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Removes all of the elements from this list. The list will be empty after this
-	 * call returns.
-	 */
-	public void clear() {
-		for(int i = actual.length-1; i>=0; i--) {
-			remove(i);
-		}
-		displayed = (T[]) new Object[0];
-		actual = (T[]) new Object[0];
-	}
-
 	public void draw() {
 		// TODO Auto-generated method stub
 		displayPanel.repaint();
@@ -221,14 +137,17 @@ public class ArrayList<T> implements Iterable<T> {
 
 	private void printExpected() {
 		String exList = "";
-		for (T t : actual) {
+		for (T t : this) {
 			exList += t.toString() + ", ";
 		}
-		System.out.println(exList.substring(0, exList.length() - 2) + " => Size: " + actual.length);
+		System.out.println(exList.substring(0, exList.length() - 2) + " => Size: " + this.size());
 	}
 
-	@Override
-	public Iterator<T> iterator() {
-		return Arrays.asList(actual).iterator();
-	}
+	// @Override
+	// public Object clone() {
+	// 	ArrayList<T> clone = (ArrayList<T>)super.clone();
+	// 	assert this.displayPanel != null;
+	// 	clone.displayPanel = this.displayPanel;
+	// 	return clone;
+	// }
 }

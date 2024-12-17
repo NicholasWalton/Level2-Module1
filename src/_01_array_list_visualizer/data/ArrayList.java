@@ -10,8 +10,14 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("unchecked")
 public class ArrayList<T> extends java.util.ArrayList<T> {
-	public ArrayListDisplayPanel<T> displayPanel = new ArrayListDisplayPanel<T>(this);
+	public ArrayListDisplayPanel<T> displayPanel;
 	
+	public ArrayList() {
+		this.displayPanel = new ArrayListDisplayPanel<T>(this);
+	}
+	ArrayList(ArrayListDisplayPanel<T> displayPanel) {
+		this.displayPanel = displayPanel;
+	}
 	/**
 	 * Returns the element at the specified position in this list.
 	 * 

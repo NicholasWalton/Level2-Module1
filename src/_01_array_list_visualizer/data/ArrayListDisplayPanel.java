@@ -18,10 +18,9 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 	Action<T> currentAction = null;
 	int lastActionIndex = -1;
 	
-	@SuppressWarnings("unchecked")
 	ArrayListDisplayPanel(ArrayList<T> list){
 		this.list = list;
-		this.displayed = (ArrayList<T>) list.clone();
+		this.displayed = new ArrayList<>(this);
 		this.displayed.displayPanel = this;
 		actionQueue = (Queue<Action<T>>) new LinkedList<Action<T>>();
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));

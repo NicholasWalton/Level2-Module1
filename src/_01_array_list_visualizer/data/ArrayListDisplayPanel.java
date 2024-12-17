@@ -147,12 +147,7 @@ public class ArrayListDisplayPanel<T> extends JPanel {
 		if (action.index < 0 || action.index > displayed.size())
 			throw new IndexOutOfBoundsException();
 
-		for (int i = 0; i < displayed.size(); i++) {
-			if (i == action.index) {
-				displayed.set(i, action.value);
-				break;
-			}
-		}
+		displayed.set(action.index, action.value);
 	}
 	
 	private void removeAnimation(Graphics g, Action<T> action) {
